@@ -97,6 +97,8 @@ int main(int argc, char* argv[]){
         ("video", po::value<string>(), "input video")
         ("proposals", po::value<string>(), "proposal file")
         ("output", po::value<string>(), "output file")
+        ("length", po::value<int>()->default_value(20), "track lengths")
+        ("sample_rate", po::value<int>()->default_value(20), "track starting sampling rate")
     ;
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -122,8 +124,8 @@ int main(int argc, char* argv[]){
 
 
     // setting some parameters
-    const int length = 20;
-    const int sample_rate = length;
+    const int length = vm["length"].as<int>();
+    const int sample_rate = vm["sample_rate"].as<int>();
 
     bool HOG = true;
     bool FIXEDWINDOW = false;
@@ -143,7 +145,7 @@ int main(int argc, char* argv[]){
     for (int i = 0; i < boxes["boxes"].size(); i++) {
         json curbox = boxes["boxes"][i];
         int frame_id = curbox["frame"].get<int>();
-        if (frame_id % sample_rate != 1) continue;
+        if ((frame_id - 1) % sample_rate != 0) continue;
         count++;
         json bbox = curbox["bbox"];
         json tracklet;
