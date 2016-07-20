@@ -155,10 +155,11 @@ int main(int argc, char* argv[]){
             tracklet);
         frame_count += num_frame;
         tracks.push_back(tracklet);
+        if (count % 100 == 0) cout << count << " tracks processed." << endl;
     }
     track_proto["tracks"] = tracks;
     cout << "Write " << count << " tracks to output file: " << vm["output"].as<string>() << endl;
     float total_time = float(clock() - begin_time) / CLOCKS_PER_SEC;
     cout << "Total time: " << total_time << " s. " << frame_count / total_time << " fps." << endl;
-    output_file << track_proto.dump();
+    output_file << track_proto.dump(2);
 }
