@@ -67,7 +67,11 @@ int single_tracking(KCFTracker & tracker,
 
         // First frame, give the groundtruth to the tracker
         if (nFrames == 0) {
-            tracker.init( Rect(xMin, yMin, width, height), frame );
+            try {
+                tracker.init( Rect(xMin, yMin, width, height), frame );
+            } catch (cv::Exception& e) {
+                return 0;
+            }
             rectangle( frame, Point( xMin, yMin ), Point( xMin+width, yMin+height), Scalar( 0, 255, 255 ), 1, 8 );
             curframe["bbox"] = {xMin, yMin, xMin + width, yMin + height};
         }
@@ -153,6 +157,7 @@ int main(int argc, char* argv[]){
             frame_id, length,
             bbox[0].get<float>(), bbox[1].get<float>(), bbox[2].get<float>(), bbox[3].get<float>(),
             tracklet);
+        if (num_frame == 0) continue;
         frame_count += num_frame;
         tracks.push_back(tracklet);
         if (count % 100 == 0) cout << count << " tracks processed." << endl;
